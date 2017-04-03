@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -211,7 +212,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     socket.addSendPacket(address, port, data, callbackContext);
     addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
-  private class MyTick extends TimerTask{
+  private class MyTick extends TimerTask {
     protected UdpSocket socket;
     protected String address;
     protected int port;
