@@ -218,7 +218,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     protected byte[] data;
     protected CallbackContext callback;
 
-    public MyTick(socket,address,port,data,callback){
+    public MyTick(UdpSocket socket,String address,int port,byte[] data,CallbackContext callback){
       this.socket = socket;
       this.address = address;
       this.port = port;
@@ -246,7 +246,8 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       callbackContext.error(buildErrorInfo(-4, "Invalid Argument"));
       return;
     }
-    new Timer('tick').scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
+    Timer t = new Timer("tick");
+    t.scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
     //socket.addSendPacket(address, port, data, callbackContext);
     //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
