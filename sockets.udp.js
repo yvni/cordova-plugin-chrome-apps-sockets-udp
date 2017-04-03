@@ -68,9 +68,9 @@ exports.sendInterval = function(socketId, data, address, port, callback) {
     var fail = callback && function(error) {
         var sendInfo = {
             bytesSent: 0,
-            resultCode: error.resultCode
+            resultCode: error
         };
-        callbackWithError(error.message, callback, sendInfo);
+        callbackWithError(error, callback, sendInfo);
     };
     exec(win, fail, 'ChromeSocketsUdp', 'sendInterval', [socketId, address, port, data]);
 };
