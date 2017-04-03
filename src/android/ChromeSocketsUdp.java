@@ -227,7 +227,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       this.callback = callback;
     }
       public void run(){
-         socket.addSendPacket(address, port, data, callbackContext);
+         socket.addSendPacket(address, port, data, callback);
          addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
       }
   }
