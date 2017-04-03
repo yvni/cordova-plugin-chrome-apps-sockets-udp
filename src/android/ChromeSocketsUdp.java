@@ -46,6 +46,29 @@ public class ChromeSocketsUdp extends CordovaPlugin {
   private Selector selector;
   private SelectorThread selectorThread;
 
+  protected MyTick tickFunc;
+  protected Timer timer;
+
+  protected class MyTick extends TimerTask {
+    protected UdpSocket socket;
+    protected String address;
+    protected int port;
+    protected byte[] data;
+    protected CallbackContext callback;
+
+    public MyTick(UdpSocket socket,String address,int port,byte[] data,CallbackContext callback){
+      this.socket = socket;
+      this.address = address;
+      this.port = port;
+      this.data = data;
+      this.callback = callback;
+    }
+    public void run(){
+      socket.addSendPacket(address, port, data, callback);
+      addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+    }
+  }
+
   @Override
   public boolean execute(String action, CordovaArgs args, final CallbackContext callbackContext)
       throws JSONException {
@@ -212,25 +235,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     socket.addSendPacket(address, port, data, callbackContext);
     addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
-  private class MyTick extends TimerTask {
-    protected UdpSocket socket;
-    protected String address;
-    protected int port;
-    protected byte[] data;
-    protected CallbackContext callback;
 
-    public MyTick(UdpSocket socket,String address,int port,byte[] data,CallbackContext callback){
-      this.socket = socket;
-      this.address = address;
-      this.port = port;
-      this.data = data;
-      this.callback = callback;
-    }
-      public void run(){
-         socket.addSendPacket(address, port, data, callback);
-         addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
-      }
-  }
    private void sendInterval(CordovaArgs args, final CallbackContext callbackContext)
       throws JSONException {
 
@@ -247,8 +252,10 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       callbackContext.error(buildErrorInfo(-4, "Invalid Argument"));
       return;
     }
-    Timer t = new Timer("tick");
-    t.scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
+     if(timer == null)
+        timer=new Timer("tick");
+
+    timer.scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
     //socket.addSendPacket(address, port, data, callbackContext);
     //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
