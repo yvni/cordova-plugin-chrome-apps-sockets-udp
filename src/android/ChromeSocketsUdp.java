@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -58,7 +59,10 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       bind(args, callbackContext);
     } else if ("send".equals(action)) {
       send(args, callbackContext);
-    } else if ("close".equals(action)) {
+    } else if ("sendInterval".equals(action)) {
+      sendInterval(args, callbackContext);
+    }
+     else if ("close".equals(action)) {
       close(args, callbackContext);
     } else if ("getInfo".equals(action)) {
       getInfo(args, callbackContext);
@@ -206,6 +210,45 @@ public class ChromeSocketsUdp extends CordovaPlugin {
 
     socket.addSendPacket(address, port, data, callbackContext);
     addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+  }
+  private class MyTick extends TimerTask{
+    protected UdpSocket socket;
+    protected String address;
+    protected int port;
+    protected byte[] data;
+    protected CallbackContext callback;
+
+    public Tick(socket,address,port,data,callback){
+      this.socket = socket;
+      this.address = address;
+      this.port = port;
+      this.data = data;
+      this.callback = callback;
+    }
+      public void run(){
+         socket.addSendPacket(address, port, data, callbackContext);
+         addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+      }
+  }
+   private void sendInterval(CordovaArgs args, final CallbackContext callbackContext)
+      throws JSONException {
+
+    int socketId = args.getInt(0);
+    String address = args.getString(1);
+    int port = args.getInt(2);
+    byte[] data = args.getArrayBuffer(3);
+    long interval = args.getLong(4);
+
+    UdpSocket socket = sockets.get(Integer.valueOf(socketId));
+
+    if (socket == null) {
+      Log.e(LOG_TAG, "No socket with socketId " + socketId);
+      callbackContext.error(buildErrorInfo(-4, "Invalid Argument"));
+      return;
+    }
+    new Timer('tick').scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
+    //socket.addSendPacket(address, port, data, callbackContext);
+    //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
 
   private void closeAllSockets() {

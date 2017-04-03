@@ -53,7 +53,27 @@ exports.bind = function(socketId, address, port, callback) {
     };
     exec(win, fail, 'ChromeSocketsUdp', 'bind', [socketId, address, port]);
 };
-
+exports.sendInterval = function(socketId, data, address, port, callback) {
+    var type = Object.prototype.toString.call(data).slice(8, -1);
+    if (type != 'ArrayBuffer') {
+        throw new Error('chrome.sockets.udp.send - data is not an ArrayBuffer! (Got: ' + type + ')');
+    }
+    var win = callback && function(bytesSent) {
+        var sendInfo = {
+            bytesSent: bytesSent,
+            resultCode: 0
+        };
+        callback(sendInfo);
+    };
+    var fail = callback && function(error) {
+        var sendInfo = {
+            bytesSent: 0,
+            resultCode: error.resultCode
+        };
+        callbackWithError(error.message, callback, sendInfo);
+    };
+    exec(win, fail, 'ChromeSocketsUdp', 'sendInterval', [socketId, address, port, data]);
+};
 exports.send = function(socketId, data, address, port, callback) {
     var type = Object.prototype.toString.call(data).slice(8, -1);
     if (type != 'ArrayBuffer') {
