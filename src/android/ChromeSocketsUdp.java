@@ -218,7 +218,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     protected byte[] data;
     protected CallbackContext callback;
 
-    public Tick(socket,address,port,data,callback){
+    public MyTick(socket,address,port,data,callback){
       this.socket = socket;
       this.address = address;
       this.port = port;
