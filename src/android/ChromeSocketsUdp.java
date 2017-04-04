@@ -67,6 +67,9 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       socket.addSendPacket(address, port, data, callback);
       addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
     }
+	public void setData(byte[] data){
+		this.data = data;
+	}
   }
 
   @Override
@@ -85,6 +88,8 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       send(args, callbackContext);
     } else if ("sendInterval".equals(action)) {
       sendInterval(args, callbackContext);
+	} else if("updateIntervalData".equals(action)){
+	  updateIntervalData(args,callbackContext);
 	} else if("stopInterval".equals(action)) {
       stopInterval(args,callbackContext);
     } else if ("close".equals(action)) {
@@ -255,8 +260,8 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     }
      if(timer == null)
         timer=new Timer("tick");
-
-    timer.scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
+	timerFunc = new MyTick(socket,address,port,data,callbackContext);
+    timer.scheduleAtFixedRate(timerFunc, 0, interval);
     //socket.addSendPacket(address, port, data, callbackContext);
     //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
@@ -272,6 +277,12 @@ public class ChromeSocketsUdp extends CordovaPlugin {
 	
   }
   
+  private void updateIntervalData(CordovaArgs args, final CallbackContext callbackContext)
+      throws JSONException {
+	  
+	  byte[] data = args.getArrayBuffer(0);
+	  timerFunc.setData(data);
+	}
   private void closeAllSockets() {
     for (UdpSocket socket: sockets.values()) {
       addSelectorMessage(socket, SelectorMessageType.SO_CLOSE, null);
