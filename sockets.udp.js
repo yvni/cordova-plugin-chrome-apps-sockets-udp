@@ -1,3 +1,4 @@
+cordova.define("cordova-plugin-chrome-apps-sockets-udp.sockets.udp", function(require, exports, module) {
 // Copyright (c) 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -74,9 +75,6 @@ exports.sendInterval = function(socketId, data, address, port,interval, callback
     };
     exec(win, fail, 'ChromeSocketsUdp', 'sendInterval', [socketId, address, port, data , interval]);
 };
-exports.stopInterval = function(){
-    exec(null, null, 'ChromeSocketsUdp', 'stopInterval', []);
-}
 exports.send = function(socketId, data, address, port, callback) {
     var type = Object.prototype.toString.call(data).slice(8, -1);
     if (type != 'ArrayBuffer') {
@@ -229,3 +227,5 @@ function registerReceiveEvents() {
 }
 
 require('cordova-plugin-chrome-apps-common.helpers').runAtStartUp(registerReceiveEvents);
+
+});
