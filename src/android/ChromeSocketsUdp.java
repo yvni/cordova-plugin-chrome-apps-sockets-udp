@@ -46,7 +46,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
   private Selector selector;
   private SelectorThread selectorThread;
 
-  protected MyTick tickFunc;
+  protected MyTick timerFunc;
   protected Timer timer;
 
   protected class MyTick extends TimerTask {
