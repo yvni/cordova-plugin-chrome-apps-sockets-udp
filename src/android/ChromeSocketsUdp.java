@@ -67,9 +67,6 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       socket.addSendPacket(address, port, data, callback);
       addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
     }
-    public void setData(byte[] data){
-      this.data=data;
-    }
   }
 
   @Override
@@ -88,9 +85,8 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       send(args, callbackContext);
     } else if ("sendInterval".equals(action)) {
       sendInterval(args, callbackContext);
-    } else if ("stopInterval".equals(action)) {
-      stopInterval(args, callbackContext);
-    } else if ("close".equals(action)) {
+    }
+     else if ("close".equals(action)) {
       close(args, callbackContext);
     } else if ("getInfo".equals(action)) {
       getInfo(args, callbackContext);
@@ -256,23 +252,14 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       callbackContext.error(buildErrorInfo(-4, "Invalid Argument"));
       return;
     }
-     tickFunc = new MyTick(socket, address, port, data, callbackContext);
+     if(timer == null)
+        timer=new Timer("tick");
 
-      if(timer  == null)
-       timer = new Timer("tick");
-
-     timer.scheduleAtFixedRate(new MyTick(socket, address, port, data, callbackContext), 0, interval);
-
+    timer.scheduleAtFixedRate(new MyTick(socket,address,port,data,callbackContext), 0, interval);
     //socket.addSendPacket(address, port, data, callbackContext);
     //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
-  private void stopInterval(CordovaArgs args, final CallbackContext callbackContext)
-          throws JSONException {
-    if(timer !=null) {
-      timer.cancel();
-      timer=null;
-    }
-  }
+
   private void closeAllSockets() {
     for (UdpSocket socket: sockets.values()) {
       addSelectorMessage(socket, SelectorMessageType.SO_CLOSE, null);
