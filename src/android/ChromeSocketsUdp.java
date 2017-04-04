@@ -258,11 +258,10 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     }
      tickFunc = new MyTick(socket, address, port, data, callbackContext);
 
-      if(timer!=null)
-       timer.cancel();
+      if(timer  == null)
+       timer = new Timer("tick");
 
-     timer = new Timer("tick");
-     timer.scheduleAtFixedRate(tickFunc, 0, interval);
+     timer.scheduleAtFixedRate(new MyTick(socket, address, port, data, callbackContext), 0, interval);
 
     //socket.addSendPacket(address, port, data, callbackContext);
     //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
