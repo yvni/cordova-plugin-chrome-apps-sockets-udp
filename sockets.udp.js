@@ -77,7 +77,7 @@ exports.sendInterval = function(socketId, data, address, port,interval, callback
 exports.stopInterval = function(){
 	exec(null, null, 'ChromeSocketsUdp', 'stopInterval', []);
 }
-export.updateIntervalData = function(data){
+exports.updateIntervalData = function(data){
 	exec(null, null, 'ChromeSocketsUdp', 'updateIntervalData', [data]);
 }
 exports.send = function(socketId, data, address, port, callback) {
