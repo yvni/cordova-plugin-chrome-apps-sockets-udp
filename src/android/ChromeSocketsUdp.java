@@ -85,8 +85,9 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       send(args, callbackContext);
     } else if ("sendInterval".equals(action)) {
       sendInterval(args, callbackContext);
-    }
-     else if ("close".equals(action)) {
+	} else if("stopInterval".equals(action)) {
+      stopInterval(args,callbackContext);
+    } else if ("close".equals(action)) {
       close(args, callbackContext);
     } else if ("getInfo".equals(action)) {
       getInfo(args, callbackContext);
@@ -259,7 +260,18 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     //socket.addSendPacket(address, port, data, callbackContext);
     //addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
-
+  
+  private void stopInterval(CordovaArgs args, final CallbackContext callbackContext)
+      throws JSONException {
+		  
+    if(timer != null){
+      timer.cancel();
+      closeAllSockets();
+	  timer = null;
+    }
+	
+  }
+  
   private void closeAllSockets() {
     for (UdpSocket socket: sockets.values()) {
       addSelectorMessage(socket, SelectorMessageType.SO_CLOSE, null);
