@@ -79,7 +79,7 @@ exports.stopInterval = function(){
 }
 exports.updateIntervalData = function(data,extraLen,extraData){
 	var args = [data,extraLen];
-	for(var i =0;i<extraLen,i++)
+	for(var i =0;i<extraLen;i++)
 		args.push(extraData[i]);
 	exec(null, null, 'ChromeSocketsUdp', 'updateIntervalData', args);
 }
