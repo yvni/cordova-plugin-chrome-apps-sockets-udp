@@ -293,7 +293,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
 		  
       byte[] data = args.getArrayBuffer(0);
       int len = args.getInt(1);
-	  ArrayList<byte[]> extra = new ArrayList>byte[]>();
+	  ArrayList<byte[]> extras = new ArrayList<byte[]>();
 	  for(int i=0;i<len;i++)
 		  extras.add(args.getArrayBuffer(2+i));
 	  timerFunc.setData(data,extras);
