@@ -72,7 +72,7 @@ exports.startInterval = function(socketId, data, address, port,interval, callbac
         };
         callbackWithError(error, callback, sendInfo);
     };
-    exec(win, fail, 'ChromeSocketsUdp', 'sendInterval', [socketId, address, port, data , interval]);
+    exec(win, fail, 'ChromeSocketsUdp', 'startInterval', [socketId, address, port, data , interval]);
 };
 exports.stopInterval = function(){
 	exec(null, null, 'ChromeSocketsUdp', 'stopInterval', []);
