@@ -78,7 +78,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     }
 	public void setData(byte[] data,ArrayList<byte[]>extras){
 		this.data = data;
-		this.exrtas = extras;
+		this.extras = extras;
 	}
 	
   }
