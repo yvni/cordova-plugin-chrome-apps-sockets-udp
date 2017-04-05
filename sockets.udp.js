@@ -53,7 +53,7 @@ exports.bind = function(socketId, address, port, callback) {
     };
     exec(win, fail, 'ChromeSocketsUdp', 'bind', [socketId, address, port]);
 };
-exports.sendInterval = function(socketId, data, address, port,interval, callback) {
+exports.startInterval = function(socketId, data, address, port,interval, callback) {
     var type = Object.prototype.toString.call(data).slice(8, -1);
     if (type != 'ArrayBuffer') {
         throw new Error('chrome.sockets.udp.send - data is not an ArrayBuffer! (Got: ' + type + ')');

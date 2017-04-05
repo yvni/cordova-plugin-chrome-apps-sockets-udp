@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
@@ -55,21 +56,31 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     protected int port;
     protected byte[] data;
     protected CallbackContext callback;
-
+	protected ArrayList<byte[]>  extras;
+	
     public MyTick(UdpSocket socket,String address,int port,byte[] data,CallbackContext callback){
       this.socket = socket;
       this.address = address;
       this.port = port;
       this.data = data;
       this.callback = callback;
+	  this.extras = new ArrayList<byte[]>();
     }
     public void run(){
       socket.addSendPacket(address, port, data, callback);
       addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+	  
+	  for(int i=0;i<extras.size();i++){
+		socket.addSendPacket(address, port, extras.get(i), callback);
+		addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+	  }
+	  
     }
-	public void setData(byte[] data){
+	public void setData(byte[] data,ArrayList<byte[]>extras){
 		this.data = data;
+		this.exrtas = extras;
 	}
+	
   }
 
   @Override
@@ -86,8 +97,8 @@ public class ChromeSocketsUdp extends CordovaPlugin {
       bind(args, callbackContext);
     } else if ("send".equals(action)) {
       send(args, callbackContext);
-    } else if ("sendInterval".equals(action)) {
-      sendInterval(args, callbackContext);
+    } else if ("startInterval".equals(action)) {
+      startInterval(args, callbackContext);
 	} else if("updateIntervalData".equals(action)){
 	  updateIntervalData(args,callbackContext);
 	} else if("stopInterval".equals(action)) {
@@ -242,7 +253,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
     addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
   }
 
-   private void sendInterval(CordovaArgs args, final CallbackContext callbackContext)
+   private void startInterval(CordovaArgs args, final CallbackContext callbackContext)
       throws JSONException {
 
     int socketId = args.getInt(0);
@@ -282,8 +293,10 @@ public class ChromeSocketsUdp extends CordovaPlugin {
 		  
       byte[] data = args.getArrayBuffer(0);
       int len = args.getInt(1);
-      
-	  timerFunc.setData(data);
+	  ArrayList<byte[]> extra = new ArrayList>byte[]>();
+	  for(int i=0;i<len;i++)
+		  extras.add(args.getArrayBuffer(2+i));
+	  timerFunc.setData(data,extras);
   }
 	
   private void closeAllSockets() {
