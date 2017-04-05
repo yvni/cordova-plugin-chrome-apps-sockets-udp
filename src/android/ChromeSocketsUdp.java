@@ -279,10 +279,13 @@ public class ChromeSocketsUdp extends CordovaPlugin {
   
   private void updateIntervalData(CordovaArgs args, final CallbackContext callbackContext)
       throws JSONException {
-	  
-	  byte[] data = args.getArrayBuffer(0);
+		  
+      byte[] data = args.getArrayBuffer(0);
+      int len = args.getInt(1);
+      JSONArray extras = args.getJSONArray(2);
 	  timerFunc.setData(data);
-	}
+  }
+	
   private void closeAllSockets() {
     for (UdpSocket socket: sockets.values()) {
       addSelectorMessage(socket, SelectorMessageType.SO_CLOSE, null);
