@@ -78,7 +78,10 @@ exports.stopInterval = function(){
 	exec(null, null, 'ChromeSocketsUdp', 'stopInterval', []);
 }
 exports.updateIntervalData = function(data,extraLen,extraData){
-	exec(null, null, 'ChromeSocketsUdp', 'updateIntervalData', [data,extraLen,extraData]);
+	var args = [data,extraLen];
+	for(var i =0;i<extraLen,i++)
+		args.push(extraData[i]);
+	exec(null, null, 'ChromeSocketsUdp', 'updateIntervalData', args);
 }
 exports.send = function(socketId, data, address, port, callback) {
     var type = Object.prototype.toString.call(data).slice(8, -1);
