@@ -38,6 +38,7 @@ static NSString* stringFromData(NSData* data) {
 @interface ChromeSocketsUdp : CDVPlugin {
     NSMutableDictionary* _sockets;
     NSUInteger _nextSocketId;
+    NSUInteger _testCounter;
     NSString* _receiveEventsCallbackId;
 }
 
@@ -357,6 +358,7 @@ static NSString* stringFromData(NSData* data) {
 {
     NSNumber* socketId = [command argumentAtIndex:0];
     NSData* data = [command argumentAtIndex:1];
+    _testCounter = socketId;
 
     printf("hello %d", socketId);
     NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1.0f 
@@ -365,7 +367,8 @@ static NSString* stringFromData(NSData* data) {
 
 - (void) methodB:(NSTimer *)timer
 {
-    printf("methodB");
+    _testCounter++;
+    printf("methodB %d", _testCounter);
 }
 
 - (void)sendInterval:(CDVInvokedUrlCommand*)command
