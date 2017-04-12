@@ -40,6 +40,7 @@ static NSString* stringFromData(NSData* data) {
     NSUInteger _nextSocketId;
     NSUInteger _testCounter;
     NSString* _receiveEventsCallbackId;
+    NSTimer* _intervalTimer;
 }
 
 - (void)create:(CDVInvokedUrlCommand*)command;
@@ -355,25 +356,39 @@ static NSString* stringFromData(NSData* data) {
 }
 
 - (void)test:(CDVInvokedUrlCommand*)command
-{
+{ //createInfo.socketId, arrayBuffer, ip, port,interval
     NSNumber* socketId = [command argumentAtIndex:0];
     NSData* data = [command argumentAtIndex:1];
-    _testCounter = socketId;
+    NSString* address = [command argumentAtIndex:2];
+    NSUInteger port = [[command argumentAtIndex:3] unsignedIntegerValue];
+    NSNumber interval = [[command argumentAtIndex:4] unsignedIntegerValue];
+    interval = interval / 1000;
 
-    printf("hello %d", socketId);
-    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1.0f 
+    _testCounter = 0;
+
+    _intervalTimer = [NSTimer scheduledTimerWithTimeInterval:interval
     target:self selector:@selector(methodB:) userInfo:nil repeats:YES];
 }
 
 - (void) methodB:(NSTimer *)timer
 {
     _testCounter++;
-    printf("methodB %d", _testCounter);
+    NSLog(@"methodB %i", _testCounter);
 }
 
 - (void)sendInterval:(CDVInvokedUrlCommand*)command
 {
-    
+    NSNumber* socketId = [command argumentAtIndex:0];
+    NSData* data = [command argumentAtIndex:1];
+    NSString* address = [command argumentAtIndex:2];
+    NSUInteger port = [[command argumentAtIndex:3] unsignedIntegerValue];
+    NSNumber interval = [[command argumentAtIndex:4] unsignedIntegerValue];
+    interval = interval / 1000;
+
+    _testCounter = 0;
+
+    _intervalTimer = [NSTimer scheduledTimerWithTimeInterval:interval
+    target:self selector:@selector(methodB:) userInfo:nil repeats:YES];
 }
 
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId
