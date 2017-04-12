@@ -387,9 +387,9 @@ static NSString* stringFromData(NSData* data) {
 - (void)startInterval:(CDVInvokedUrlCommand*)command
 {
     NSNumber* socketId = [command argumentAtIndex:0];
-    NSData* data = [command argumentAtIndex:1];
-    NSString* address = [command argumentAtIndex:2];
-    NSUInteger port = [[command argumentAtIndex:3] unsignedIntegerValue];
+    NSString* address = [command argumentAtIndex:1];
+    NSUInteger port = [[command argumentAtIndex:2] unsignedIntegerValue];
+    NSData* data = [command argumentAtIndex:3];
     NSUInteger intervalInt = [command argumentAtIndex:4];
     NSTimeInterval interval = intervalInt;
     //NSTimeInterval interval = [command argumentAtIndex:4];
