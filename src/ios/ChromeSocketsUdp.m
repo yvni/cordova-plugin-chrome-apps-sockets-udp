@@ -62,7 +62,7 @@ static NSString* stringFromData(NSData* data) {
 - (void)fireReceiveEventsWithSocketId:(NSUInteger)theSocketId data:(NSData*)theData address:(NSString*)theAddress port:(NSUInteger)thePort;
 - (void)fireReceiveErrorEventsWithSocketId:(NSUInteger)theSocketId error:(NSError*)theError;
 - (void)test:(CDVInvokedUrlCommand*)command;
-- (void)startInterval:(CDVInvokedUrlCommand*)command
+- (void)startInterval:(CDVInvokedUrlCommand*)command;
 @end
 
 #pragma mark ChromeSocketsUdpSocket interface
@@ -390,6 +390,7 @@ static NSString* stringFromData(NSData* data) {
     NSData* data = [command argumentAtIndex:1];
     NSString* address = [command argumentAtIndex:2];
     NSUInteger port = [[command argumentAtIndex:3] unsignedIntegerValue];
+    NSUInteger intervalInt = [command argumentAtIndex:4];
     NSTimeInterval interval = intervalInt;
     //NSTimeInterval interval = [command argumentAtIndex:4];
     //interval = interval / 1000;
