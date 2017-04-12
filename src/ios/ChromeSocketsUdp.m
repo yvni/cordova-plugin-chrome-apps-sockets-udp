@@ -359,6 +359,13 @@ static NSString* stringFromData(NSData* data) {
     NSData* data = [command argumentAtIndex:1];
 
     printf("hello %d", socketId);
+    NSTimer* timer = [NSTimer scheduledTimerWithTimeInterval:1.0f 
+    target:self selector:@selector(methodB:) userInfo:nil repeats:YES];
+}
+
+- (void) methodB:(NSTimer *)timer
+{
+    printf("methodB");
 }
 
 - (void)sendInterval:(CDVInvokedUrlCommand*)command
