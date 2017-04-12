@@ -41,6 +41,14 @@ static NSString* stringFromData(NSData* data) {
     NSUInteger _testCounter;
     NSString* _receiveEventsCallbackId;
     NSTimer* _intervalTimer;
+    
+    
+    NSNumber* _socketId;
+    NSString* _address;
+    NSUInteger _port;
+    NSData* _data;
+    NSString* _callbackId;
+
 }
 
 - (void)create:(CDVInvokedUrlCommand*)command;
@@ -63,7 +71,7 @@ static NSString* stringFromData(NSData* data) {
 - (void)fireReceiveErrorEventsWithSocketId:(NSUInteger)theSocketId error:(NSError*)theError;
 - (void)test:(CDVInvokedUrlCommand*)command;
 - (void)startInterval:(CDVInvokedUrlCommand*)command;
-- (void)clearInterval:(CDVInvokedUrlCommand*)command;
+- (void)stopInterval:(CDVInvokedUrlCommand*)command;
 @end
 
 #pragma mark ChromeSocketsUdpSocket interface
@@ -376,6 +384,28 @@ static NSString* stringFromData(NSData* data) {
 
 - (void) methodB:(NSTimer *)timer
 {
+    ChromeSocketsUdpSocket* socket = _sockets[_socketId];
+    
+    if (socket == nil) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self buildErrorInfoWithErrorCode:ENOTSOCK message:@"Invalid Argument"]] callbackId:_callbackId];
+        return;
+    }
+    
+    id<CDVCommandDelegate> commandDelegate = self.commandDelegate;
+    [socket->_sendCallbacks addObject:[^(BOOL success, NSError* error) {
+        VERBOSE_LOG(@"ACK %@.%@ Write: %d", _socketId, command.callbackId, success);
+        
+        if (success) {
+            [commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[_data length]] callbackId:_callbackId];
+        } else {
+            [commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self buildErrorInfoWithErrorCode:[error code] message:[error localizedDescription]]] callbackId:_callbackId];
+        }
+    } copy]];
+    
+    [socket->_socket sendData:_data toHost:_address port:_port withTimeout:-1 tag:-1];
+    
+
+    
     _testCounter++;
     NSLog(@"methodB %i", _testCounter);
 }
@@ -387,10 +417,11 @@ static NSString* stringFromData(NSData* data) {
 
 - (void)startInterval:(CDVInvokedUrlCommand*)command
 {
-    NSNumber* socketId = [command argumentAtIndex:0];
-    NSString* address = [command argumentAtIndex:1];
-    NSUInteger port = [[command argumentAtIndex:2] unsignedIntegerValue];
-    NSData* data = [command argumentAtIndex:3];
+    _callbackId = command.callbackId;
+    _socketId = [command argumentAtIndex:0];
+    _address = [command argumentAtIndex:1];
+    _port = [[command argumentAtIndex:2] unsignedIntegerValue];
+    _data = [command argumentAtIndex:3];
     NSUInteger intervalInt = [[command argumentAtIndex:4] unsignedIntegerValue];
     double interval = (double)intervalInt / 1000;
     //NSTimeInterval interval = [command argumentAtIndex:4];
@@ -402,7 +433,7 @@ static NSString* stringFromData(NSData* data) {
     target:self selector:@selector(methodB:) userInfo:nil repeats:YES];
 }
 
-- (void)clearInterval:(CDVInvokedUrlCommand*)command
+- (void)stopInterval:(CDVInvokedUrlCommand*)command
 {
     [_intervalTimer invalidate];
     _intervalTimer = nil;
