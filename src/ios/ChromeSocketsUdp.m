@@ -362,8 +362,8 @@ static NSString* stringFromData(NSData* data) {
     NSData* data = [command argumentAtIndex:1];
     NSString* address = [command argumentAtIndex:2];
     NSUInteger port = [[command argumentAtIndex:3] unsignedIntegerValue];
-    NSUInteger intervalInt = [command argumentAtIndex:4];
-    NSTimeInterval interval = intervalInt;
+    NSUInteger intervalInt = [[command argumentAtIndex:4] unsignedIntegerValue];
+    double interval = (double)intervalInt / 1000;
     //NSTimeInterval interval = [intervalInt doubleValue];
     //interval = interval / 1000;
 
@@ -390,8 +390,8 @@ static NSString* stringFromData(NSData* data) {
     NSString* address = [command argumentAtIndex:1];
     NSUInteger port = [[command argumentAtIndex:2] unsignedIntegerValue];
     NSData* data = [command argumentAtIndex:3];
-    NSUInteger intervalInt = [command argumentAtIndex:4];
-    NSTimeInterval interval = intervalInt;
+    NSUInteger intervalInt = [[command argumentAtIndex:4] unsignedIntegerValue];
+    double interval = (double)intervalInt / 1000;
     //NSTimeInterval interval = [command argumentAtIndex:4];
     //interval = interval / 1000;
 
