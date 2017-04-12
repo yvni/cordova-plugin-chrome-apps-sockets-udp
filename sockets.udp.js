@@ -20,6 +20,10 @@ var checkBufferSize = function(bufferSize) {
     }
 };
 
+var testCallback = function() {
+    console.log('testCallback success');
+};
+
 exports.create = function(properties, callback) {
     if (typeof properties == 'function') {
         callback = properties;
@@ -33,6 +37,10 @@ exports.create = function(properties, callback) {
     };
     checkBufferSize(properties.bufferSize);
     exec(win, null, 'ChromeSocketsUdp', 'create', [properties]);
+};
+
+exports.test = function(socketId, data) {
+    exec(testCallback, null, 'ChromeSocketsUdp', 'test', [socketId, data]);
 };
 
 exports.update = function(socketId, properties, callback) {

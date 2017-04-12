@@ -59,6 +59,7 @@ static NSString* stringFromData(NSData* data) {
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId;
 - (void)fireReceiveEventsWithSocketId:(NSUInteger)theSocketId data:(NSData*)theData address:(NSString*)theAddress port:(NSUInteger)thePort;
 - (void)fireReceiveErrorEventsWithSocketId:(NSUInteger)theSocketId error:(NSError*)theError;
+- (void)test:(CDVInvokedUrlCommand*)command;
 @end
 
 #pragma mark ChromeSocketsUdpSocket interface
@@ -350,6 +351,19 @@ static NSString* stringFromData(NSData* data) {
     } copy]];
 
     [socket->_socket sendData:data toHost:address port:port withTimeout:-1 tag:-1];
+}
+
+- (void)test:(CDVInvokedUrlCommand*)command
+{
+    NSNumber* socketId = [command argumentAtIndex:0];
+    NSData* data = [command argumentAtIndex:1];
+
+    printf("hello %d", socketId);
+}
+
+- (void)sendInterval:(CDVInvokedUrlCommand*)command
+{
+    
 }
 
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId
