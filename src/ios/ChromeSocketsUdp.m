@@ -63,6 +63,7 @@ static NSString* stringFromData(NSData* data) {
 - (void)fireReceiveErrorEventsWithSocketId:(NSUInteger)theSocketId error:(NSError*)theError;
 - (void)test:(CDVInvokedUrlCommand*)command;
 - (void)startInterval:(CDVInvokedUrlCommand*)command;
+- (void)clearInterval:(CDVInvokedUrlCommand*)command;
 @end
 
 #pragma mark ChromeSocketsUdpSocket interface
@@ -399,6 +400,12 @@ static NSString* stringFromData(NSData* data) {
 
     _intervalTimer = [NSTimer scheduledTimerWithTimeInterval:interval
     target:self selector:@selector(methodB:) userInfo:nil repeats:YES];
+}
+
+- (void)clearInterval:(CDVInvokedUrlCommand*)command
+{
+    [_intervalTimer invalidate];
+    _intervalTimer = nil;
 }
 
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId
