@@ -52,8 +52,9 @@ static NSString* stringFromData(NSData* data) {
     NSMutableArray* _extras;
     
 }
-
+@property (nonatomic) UIBackgroundTaskIdentifier backgroundTask;
 @property (nonatomic, strong) NSTimer* _intervalTimer;
+
 
 - (void)create:(CDVInvokedUrlCommand*)command;
 - (void)update:(CDVInvokedUrlCommand*)command;
@@ -464,6 +465,11 @@ static NSString* stringFromData(NSData* data) {
         self._intervalTimer = [NSTimer timerWithTimeInterval:interval target:self selector:@selector(tick:) userInfo:nil repeats:YES];
         [[NSRunLoop mainRunLoop] addTimer:self._intervalTimer forMode:NSDefaultRunLoopMode];
         
+        self.backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            NSLog(@"Background handler called. Not running background tasks anymore.");
+            [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTask];
+            self.backgroundTask = UIBackgroundTaskInvalid;
+        }];
     }];
     
 }
@@ -476,6 +482,12 @@ static NSString* stringFromData(NSData* data) {
         [self closeSocketWithId:socketId callbackId:nil];
     }
     [_extras removeAllObjects];
+    
+    if (self.backgroundTask != UIBackgroundTaskInvalid)
+    {
+        [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTask];
+        self.backgroundTask = UIBackgroundTaskInvalid;
+    }
 }
 
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId
