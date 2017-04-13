@@ -43,7 +43,7 @@ static NSString* stringFromData(NSData* data) {
     NSUInteger _testCounter;
     NSString* _receiveEventsCallbackId;
     
-
+    
     
     NSNumber* _socketId;
     NSString* _address;
@@ -403,7 +403,7 @@ static NSString* stringFromData(NSData* data) {
     [socket->_socket sendData:_data toHost:_address port:_port withTimeout:-1 tag:-1];
     
     _testCounter++;
-    NSLog(@"methodB %i", _testCounter);
+    NSLog(@"tick %i", (int)_testCounter);
     
 }
 
@@ -427,7 +427,7 @@ static NSString* stringFromData(NSData* data) {
         
         
         //self._intervalTimer = [NSTimer scheduledTimerWithTimeInterval: interval target: self
-                                                       // selector: @selector(tick:) userInfo: nil repeats: YES];
+        // selector: @selector(tick:) userInfo: nil repeats: YES];
         
         //NSLog(@"%@", self._intervalTimer.isValid);
         //[self._intervalTimer fire];
@@ -436,13 +436,16 @@ static NSString* stringFromData(NSData* data) {
         [[NSRunLoop mainRunLoop] addTimer:self._intervalTimer forMode:NSDefaultRunLoopMode];
         
     }];
-
+    
 }
 
 - (void)stopInterval:(CDVInvokedUrlCommand*)command
 {
     [self._intervalTimer invalidate];
     self._intervalTimer = nil;
+    for (NSNumber* socketId in _sockets) {
+        [self closeSocketWithId:socketId callbackId:nil];
+    }
 }
 
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId
