@@ -40,7 +40,6 @@ static NSString* stringFromData(NSData* data) {
 @interface ChromeSocketsUdp : CDVPlugin {
     NSMutableDictionary* _sockets;
     NSUInteger _nextSocketId;
-    NSUInteger _testCounter;
     NSString* _receiveEventsCallbackId;
     
     
@@ -50,6 +49,7 @@ static NSString* stringFromData(NSData* data) {
     NSUInteger _port;
     NSData* _data;
     NSString* _callbackId;
+    NSMutableArray* _extras;
     
 }
 
@@ -261,6 +261,7 @@ static NSString* stringFromData(NSData* data) {
     _sockets = [NSMutableDictionary dictionary];
     _nextSocketId = 0;
     _receiveEventsCallbackId = nil;
+    _extras = [[NSMutableArray alloc]init];
 }
 
 - (void)onReset
@@ -378,8 +379,6 @@ static NSString* stringFromData(NSData* data) {
 - (void) tick:(NSTimer *)timer
 {
     
-    NSLog(@"Timer called!");
-    
     //add your code here
     
     ChromeSocketsUdpSocket* socket = _sockets[_socketId];
@@ -402,9 +401,25 @@ static NSString* stringFromData(NSData* data) {
     } copy]];
     
     [socket->_socket sendData:_data toHost:_address port:_port withTimeout:-1 tag:-1];
+    int extrasSize = [_extras count];
+    if( extrasSize >0)
+    {
+        for(int index = 0;index < extrasSize; index++){
+            
+            id<CDVCommandDelegate> commandDelegate = self.commandDelegate;
+            [socket->_sendCallbacks addObject:[^(BOOL success, NSError* error) {
+                VERBOSE_LOG(@"ACK %@.%@ Write: %d", _socketId, _callbackId, success);
+                
+                if (success) {
+                    [commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[_data length]] callbackId:_callbackId];
+                } else {
+                    [commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:[self buildErrorInfoWithErrorCode:[error code] message:[error localizedDescription]]] callbackId:_callbackId];
+                }
+            } copy]];
+            [socket->_socket sendData:[_extras objectAtIndex:index] toHost:_address port:_port withTimeout:-1 tag:-1];
+        }
+    }
     
-    _testCounter++;
-    NSLog(@"tick %i", (int)_testCounter);
     
 }
 
@@ -414,7 +429,17 @@ static NSString* stringFromData(NSData* data) {
 }
 - (void)updateIntervalData:(CDVInvokedUrlCommand*)command;{
     NSData* data = [command argumentAtIndex:0];
-    NSData* extras = [command argumentAtIndex:1];
+    NSNumber* number  = [command argumentAtIndex:1];
+    int len = [number intValue];
+    
+    [_extras removeAllObjects];
+    
+    for (long i = 0; i < len; i++)
+    {
+        NSData* extra =[command argumentAtIndex:(2+i)];
+        [_extras addObject:extra];
+    }
+    _data = data;
 }
 - (void)startInterval:(CDVInvokedUrlCommand*)command
 {
@@ -450,6 +475,7 @@ static NSString* stringFromData(NSData* data) {
     for (NSNumber* socketId in _sockets) {
         [self closeSocketWithId:socketId callbackId:nil];
     }
+    [_extras removeAllObjects];
 }
 
 - (void)closeSocketWithId:(NSNumber*)socketId callbackId:(NSString*)theCallbackId
