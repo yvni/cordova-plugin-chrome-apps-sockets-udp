@@ -43,10 +43,8 @@
     </config-file>
   </platform>
 
-<platform name="windows">
-    <js-module src="src/windows/ChromeSocketsUdp.js" name="ChromeSocketsUdp">
-        <merges target="" />
-    </js-module>
-</platform>
+    <platform name="windows">
+        <source-file src="src/windows/ChromeSocketsUdp.js" />
+    </platform>
 
 </plugin>
