@@ -1,7 +1,7 @@
 
 module.exports=
     {
-    function test(testCallback, null, args){
+    test: function (testCallback, null, args){
         console.log("testtttt");
         console.dir(args);
     }
