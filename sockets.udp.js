@@ -239,6 +239,17 @@ function registerReceiveEvents() {
         };
         callbackWithError(info.message, error);
     };
+    
+    if (platform.id == 'windows')
+    {
+        fail = function (info) {
+            var error = function () {
+                exports.onReceiveError.fire(info);
+            };
+            callbackWithError(info, error);
+        };
+    }
+    
     exec(win, fail, 'ChromeSocketsUdp', 'registerReceiveEvents', []);
 }
 
