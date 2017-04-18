@@ -1,10 +1,10 @@
 
 module.exports=
     {
-    test: function (testCallback, null, args){
+    test: function (testCallback, testCallback2, args){
         console.log("testtttt");
         console.dir(args);
-    }
+    },
     registerReceiveEvents: function(args){
         console.log("registerReceiveEvents");
     }
