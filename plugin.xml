@@ -42,12 +42,22 @@
       </feature>
     </config-file>
   </platform>
-
+<!-- 
     <platform name="windows">
-<!--        <source-file src="src/windows/ChromeSocketsUdp.js" />-->
+       <source-file src="src/windows/ChromeSocketsUdp.js" />
     <js-module src="src/windows/ChromeSocketsUdp.js" name="ChromeSocketsUdp">
           <clobbers target="chrome.sockets.udp" />
     </js-module>
+    </platform>
+
+    -->
+
+
+    <!-- windows -->
+    <platform name="windows">
+        <js-module src="src/windows/ChromeSocketsUdp.js" name="WindowsUdpProxy">
+            <merges target="chrome.sockets.udp" />
+        </js-module>
     </platform>
 
 </plugin>

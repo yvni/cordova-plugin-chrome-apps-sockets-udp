@@ -117,13 +117,17 @@ exports.close = function(socketId, callback) {
     exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
 };
 
+exports.closeSocket = function() {
+    exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
+};
+
 exports.getInfo = function(socketId, callback) {
     var win = callback && function(result) {
         result.persistent = !!result.persistent;
         result.paused = !!result.paused;
         callback(result);
     };
-    exec(win, null, 'ChromeSocketsUdp', 'getInfo', [socketId]);
+    exec(null, null, "WindowsUdp", "closeSocket",[]);
 };
 
 exports.getSockets = function(callback) {
@@ -239,7 +243,7 @@ function registerReceiveEvents() {
         };
         callbackWithError(info.message, error);
     };
-    
+
     if (platform.id == 'windows')
     {
         fail = function (info) {
@@ -249,7 +253,7 @@ function registerReceiveEvents() {
             callbackWithError(info, error);
         };
     }
-    
+
     exec(win, fail, 'ChromeSocketsUdp', 'registerReceiveEvents', []);
 }
 
