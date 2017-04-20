@@ -1,6 +1,6 @@
 //  JavaScript
 var cordova = require('cordova'),
-    WindowsUdp = require('./sockets.udp.js');
+    ChromeSocketsUdp = require('./sockets.udp.js');
 var socketsSample = {};
 var msgRecieved = function () {
         console.log("ping");
@@ -90,4 +90,4 @@ module.exports = {
         socketsSample.connected = false;
     }
 };
-require("cordova/exec/proxy").add("WindowsUdp", module.exports);
+require("cordova/exec/proxy").add("ChromeSocketsUdp", module.exports);

@@ -56,15 +56,14 @@
     <!-- windows -->
     <platform name="windows">
         <source-file src="src/windows/ChromeSocketsUdp.js" />
-
+        <!-- <js-module src="src/windows/ChromeSocketsUdp.js" name="ChromeSocketsUdp">
+            <merges target="" />
+        </js-module> -->
         <config-file target="config.xml" parent="/widget">
           <feature name="ChromeSocketsUdp">
             <param name="windows-package" value="ChromeSocketsUdp"/>
           </feature>
         </config-file>
-        <!-- <js-module src="src/windows/ChromeSocketsUdp.js" name="WindowsUdpProxy">
-            <merges target="" />
-        </js-module> -->
     </platform>
 
 </plugin>
