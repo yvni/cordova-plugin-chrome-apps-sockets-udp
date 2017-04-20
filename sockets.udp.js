@@ -121,6 +121,14 @@ exports.closeSocket = function() {
     exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
 };
 
+exports.openSocket = function(successCallback, errorCallback,ip,port) {
+    exec(successCallback, errorCallback, "WindowsUdp", "openSocket", [ip,port]);
+};
+
+exports.sendWin = function(successCallback, errorCallback,data){
+    exec(null,null, "WindowsUdp", "send", [data]);
+};
+
 exports.getInfo = function(socketId, callback) {
     var win = callback && function(result) {
         result.persistent = !!result.persistent;
