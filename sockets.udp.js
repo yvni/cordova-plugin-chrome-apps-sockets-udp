@@ -118,15 +118,15 @@ exports.close = function(socketId, callback) {
 };
 
 exports.closeSocket = function() {
-    exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
+    exec(null, null, 'ChromeSocketsUdp', 'close', [socketId]);
 };
 
 exports.openSocket = function(successCallback, errorCallback,ip,port) {
-    exec(successCallback, errorCallback, "WindowsUdp", "openSocket", [ip,port]);
+    exec(successCallback, errorCallback, "ChromeSocketsUdp", "openSocket", [ip,port]);
 };
 
 exports.sendWin = function(successCallback, errorCallback,data){
-    exec(null,null, "WindowsUdp", "send", [data]);
+    exec(null,null, "ChromeSocketsUdp", "send", [data]);
 };
 
 exports.getInfo = function(socketId, callback) {
