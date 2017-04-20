@@ -117,8 +117,10 @@ exports.close = function(socketId, callback) {
     exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
 };
 
+//-------------- Windows -------------------------------------------------------------------
+
 exports.closeSocket = function() {
-    exec(null, null, 'ChromeSocketsUdp', 'close', [socketId]);
+    exec(null, null, 'ChromeSocketsUdp', 'closeSocket', [socketId]);
 };
 
 exports.openSocket = function(successCallback, errorCallback,ip,port) {
@@ -128,6 +130,9 @@ exports.openSocket = function(successCallback, errorCallback,ip,port) {
 exports.sendWin = function(successCallback, errorCallback,data){
     exec(null,null, "ChromeSocketsUdp", "send", [data]);
 };
+
+//-------------- Windows - End -------------------------------------------------------------------
+
 
 exports.getInfo = function(socketId, callback) {
     var win = callback && function(result) {
