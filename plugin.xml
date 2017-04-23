@@ -55,7 +55,7 @@
     <!-- windows -->
     <platform name="windows">
         <!-- <source-file src="src/windows/ChromeSocketsUdp.js" name="ChromeSocketsUdp"/> -->
-        <js-module src="src/windows/ChromeSocketsUdp.js" >
+        <js-module src="src/windows/ChromeSocketsUdp.js" name="ChromeSocketsUdp">
             <merges target="" />
         </js-module>
         <!-- <config-file target="config.xml" parent="/widget">

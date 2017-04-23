@@ -11,7 +11,7 @@
 //     }
 // });
 var cordova = require('cordova'),
-    ChromeSocketsUdp = require('./sockets.udp.js');
+    // ChromeSocketsUdp = require('./sockets.udp.js');
 var socketsSample = {};
 var msgRecieved = function () {
         console.log("ping");
