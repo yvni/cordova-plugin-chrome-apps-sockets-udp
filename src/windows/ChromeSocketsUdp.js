@@ -1,18 +1,6 @@
-//  JavaScript
-//
-//  cordova.commandProxy.add("Echo",{
-//     echo:function(successCallback,errorCallback,strInput) {
-//         if(!strInput || !strInput.length) {
-//             errorCallback("Error, something was wrong with the input string. =>" + strInput);
-//         }
-//         else {
-//             successCallback(strInput + "echo");
-//         }
-//     }
-// });
 var cordova = require('cordova');
-    // ChromeSocketsUdp = require('./sockets.udp.js');
 var socketsSample = {};
+
 var msgRecieved = function () {
         console.log("ping");
     };
@@ -101,5 +89,4 @@ module.exports = {
         socketsSample.connected = false;
     }
 };
-// require("cordova/exec/proxy").add("ChromeSocketsUdp", module.exports);
 cordova.commandProxy.add("ChromeSocketsUdp", module.exports);
