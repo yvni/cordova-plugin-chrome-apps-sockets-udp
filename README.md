@@ -1,40 +1,49 @@
-# chrome.sockets.tcp Plugin
+# Custom devalore  fork repository
 
-This plugin provides UDP sockets for Android and iOS.
+This plugin provides UDP sockets for Android , iOS and Windows (WUP).
 
 ## Status
 
-Beta on Android and iOS.
+Beta on Android iOS and Windows.
+
+Native source code functions and object usage
+~ stands for objects
+- stands for functions
+==============================================
+
+android (.Java):
+	~ has timer object global.
+	~ has global timerTick object
+	- create
+	- bind
+	- send
+	- startInterval
+	- updateIntervalData
+	- stopInterval
+	- close
+ios (.m):
+	~ has global timer pointer
+	- has local tick function
+	- create
+	- bind
+	- send
+	- close
+	- startInterval
+	- stopInterval
+	- updateIntervalData
+windows (.js):
+	~ has global json object for single socket info
+	~ has global json object for interval socket info
+	- openSocket
+	- send
+	- closeSocket
+	- startWinInterval
+	- stopWinInterval
+	- updateIntervalData
 
 ## Reference
 
-The API reference is [here](https://developer.chrome.com/apps/sockets_udp).
+The API reference for ios and android is [here](https://developer.chrome.com/apps/sockets_udp).
+The APi reference for windows is [here] (https://github.com/Microsoft/Windows-universal-samples).
 
-# Release Notes
 
-## 1.3.0 (Sep 27, 2016)
-- Adds `chrome.udp.setBroadcast()`
-
-## 1.2.2 (April 30, 2015)
-- Renamed plugin to pubilsh to NPM
-
-## 1.2.1 (Mar 17, 2015)
-* Fix multicast socket cannot pause & send receive event synchronously
-
-## 1.2.0 (November 17, 2014)
-* Remove unnecessary headers for chrome.sockets.* - ios
-* Fix possible blocks leak memory
-* Fixed chrome.sockets.udp socket close with error problem
-* Commented out assert that caused app to crash when no network is available.
-* chrome.sockets: open selector in selector thread
-* Don't modify interest set when key is invalid (fix #388)
-
-## 1.1.0 (October 24, 2014)
-* Add `chrome.sockets.secure.tcp` and refactor `chrome.sockets.*`
-
-## 1.0.1 (October 23, 2014)
-* Fix a NullPointerException on Android
-* Fix the dependency on iosSocketsCommon so that it works with the Cordova plugin registry.
-
-## 1.0.0 (October 21, 2014)
-* Initial release
