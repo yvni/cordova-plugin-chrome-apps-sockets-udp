@@ -110,19 +110,19 @@ module.exports = {
         socketsInterval.dataWriterForInterval = new Windows.Storage.Streams.DataWriter(socketsInterval.socketForInterval.outputStream);
 
         var tick = function () {
-            var len = socketsInterval.dataInterval[0].byteLength;
-            var bytearray = new Uint8Array(len);
-            var view = new DataView(socketsInterval.dataInterval[0]);
+            var len, bytearray, view;
+            for (var dataIndex = 0; dataIndex < socketsInterval.dataInterval.length; dataIndex++) {
+                len = socketsInterval.dataInterval[dataIndex].byteLength;
+                    bytearray = new Uint8Array(len);
+                    view = new DataView(socketsInterval.dataInterval[dataIndex]);
 
-            for (var i = 0; i < len; i++) {
-                bytearray[i] = view.getInt8(i);
+                    for (var i = 0; i < len; i++) {
+                        bytearray[i] = view.getInt8(i);
+                    }
+
+                    socketsInterval.dataWriterForInterval.writeBytes(bytearray);
+                    socketsInterval.dataWriterForInterval.storeAsync();
             }
-
-            socketsInterval.dataWriterForInterval.writeBytes(bytearray);
-            socketsInterval.dataWriterForInterval.storeAsync().done(function () {
-                console.log('tick');
-            }, function (err) { console.log(err); });
-            
         };
 
         socketsInterval.timer = setInterval(tick, socketsInterval.interval);
