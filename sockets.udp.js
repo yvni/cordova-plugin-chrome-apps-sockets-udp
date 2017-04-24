@@ -1,3 +1,4 @@
+cordova.define("cordova-plugin-chrome-apps-sockets-udp.sockets.udp", function(require, exports, module) {
 // Copyright (c) 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -130,7 +131,13 @@ exports.openSocket = function(successCallback, errorCallback,ip,port) {
 exports.sendWin = function(successCallback, errorCallback,data){
     exec(null,null, "ChromeSocketsUdp", "send", [data]);
 };
+exports.startWinInterval = function(successCallback, errorCallback,data,interval){
+	exec(null,null, "ChromeSocketsUdp", "startWinInterval", [data,interval]);
+};
 
+exports.stopWinInterval = function(successCallback, errorCallback){
+	exec(null,null, "ChromeSocketsUdp", "stopWinInterval", []);
+};
 //-------------- Windows - End -------------------------------------------------------------------
 
 
@@ -271,3 +278,5 @@ function registerReceiveEvents() {
 }
 
 require('cordova-plugin-chrome-apps-common.helpers').runAtStartUp(registerReceiveEvents);
+
+});
