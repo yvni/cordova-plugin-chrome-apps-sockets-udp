@@ -133,6 +133,9 @@ module.exports = {
             socketsInterval.socketForInterval = null;
             socketsInterval.dataWriterForInterval = null;
         }
+    },
+	 updateIntervalData: function (successCallback, errorCallback, args) {
+        socketsInterval.dataInterval = args[0];
     }
 };
 cordova.commandProxy.add("ChromeSocketsUdp", module.exports);
