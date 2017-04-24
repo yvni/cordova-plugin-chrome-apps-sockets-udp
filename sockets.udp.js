@@ -132,7 +132,7 @@ exports.sendWin = function(successCallback, errorCallback,data){
 };
 
 exports.startWinInterval = function(successCallback, errorCallback,ip,port,data,interval){
-	exec(null,null, "ChromeSocketsUdp", "startWinInterval", [data,interval]);
+	exec(null,null, "ChromeSocketsUdp", "startWinInterval", [ip,port,data,interval]);
 };
 
 exports.stopWinInterval = function(successCallback, errorCallback){
