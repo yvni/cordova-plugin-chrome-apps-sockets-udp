@@ -1,6 +1,6 @@
 var cordova = require('cordova');
 var socketsSample = {};
-
+var socketsInterval = { timer: null, dataInterval: [] };
 var msgRecieved = function () {
         console.log("ping");
     };
@@ -81,6 +81,58 @@ module.exports = {
             socketsSample.listenerOutputStream = null;
         }
         socketsSample.connected = false;
+    },
+    startWinInterval: function (successCallback, errorCallback, args) {
+        socketsInterval.ip = args[0];
+        socketsInterval.port = args[1];
+        socketsInterval.dataInterval = args[2];
+        socketsInterval.interval = args[3];
+
+        var onError = function (reason) {
+                WinJS.log && WinJS.log(reason, "sample", "error");
+            
+        };
+
+        socketsInterval.socketForInterval = new Windows.Networking.Sockets.DatagramSocket();
+
+        var hostName;
+        try {
+            hostName = new Windows.Networking.HostName(socketsInterval.ip);
+        } catch (error) {
+            WinJS.log && WinJS.log("Error: Invalid host name.", "sample", "error");
+            return;
+        }
+
+        socketsInterval.serviceNameAccept = socketsInterval.port;
+        socketsInterval.hostNameConnect = hostName;
+        socketsInterval.socketForInterval.connectAsync(socketsInterval.hostNameConnect, socketsInterval.serviceNameAccept);
+
+        socketsInterval.dataWriterForInterval = new Windows.Storage.Streams.DataWriter(socketsInterval.socketForInterval.outputStream);
+
+        var tick = function () {
+            var len = socketsInterval.dataInterval[0].byteLength;
+            var bytearray = new Uint8Array(len);
+            var view = new DataView(socketsInterval.dataInterval[0]);
+
+            for (var i = 0; i < len; i++) {
+                bytearray[i] = view.getInt8(i);
+            }
+
+            socketsInterval.dataWriterForInterval.writeBytes(bytearray);
+            socketsInterval.dataWriterForInterval.storeAsync().done(function () {
+                console.log('tick');
+            }, function (err) { console.log(err); });
+            
+        };
+
+        socketsInterval.timer = setInterval(tick, socketsInterval.interval);
+    },
+    stopWinInterval: function (successCallback, errorCallback, args) {
+        if (socketsInterval.timer) {
+            window.clearInterval(socketsInterval.timer);
+            socketsInterval.socketForInterval = null;
+            socketsInterval.dataWriterForInterval = null;
+        }
     }
 };
 cordova.commandProxy.add("ChromeSocketsUdp", module.exports);
