@@ -261,9 +261,9 @@ function registerReceiveEvents() {
     {
         fail = function (info) {
             var error = function () {
-                exports.onReceiveError.fire(info);
+                
             };
-            callbackWithError(info, error);
+            
         };
     }
 
