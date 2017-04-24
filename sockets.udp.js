@@ -120,7 +120,7 @@ exports.close = function(socketId, callback) {
 //-------------- Windows -------------------------------------------------------------------
 
 exports.closeSocket = function() {
-    exec(null, null, 'ChromeSocketsUdp', 'closeSocket', [socketId]);
+    exec(null, null, 'ChromeSocketsUdp', 'closeSocket', []);
 };
 
 exports.openSocket = function(successCallback, errorCallback,ip,port) {

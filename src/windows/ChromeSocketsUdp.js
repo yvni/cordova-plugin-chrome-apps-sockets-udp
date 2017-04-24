@@ -39,9 +39,6 @@ module.exports = {
     },
     send: function (successCallback, errorCallback,args){
         data = args[0];
-        data = new ArrayBuffer(5);
-        var view = new DataView(data);
-        view.setUint8(0, 52);
             var onError = function(reason) {
                 // When we close a socket, outstanding async operations will be canceled and the
                 // error callbacks called.  There's no point in displaying those errors.
@@ -53,15 +50,12 @@ module.exports = {
             socketsSample.clientDataWriter =
                 new Windows.Storage.Streams.DataWriter(socketsSample.clientSocket.outputStream);
             }
-        var str = "";
         var len = data.byteLength;
         var bytearray = new Uint8Array(len);
         var view = new DataView(data);
         for (var i = 0; i < len; ++i) {
             bytearray[i] = view.getUint8(i);
         }
-        for (var i = 0;i< data.byteLength; i++)
-            str += view.getUint8(i);
         socketsSample.clientDataWriter.writeBytes(bytearray);
 
         socketsSample.clientDataWriter.storeAsync().done(function () {
