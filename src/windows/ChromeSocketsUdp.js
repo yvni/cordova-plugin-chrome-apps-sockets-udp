@@ -134,7 +134,7 @@ module.exports = {
             socketsInterval.dataWriterForInterval = null;
         }
     },
-	 updateIntervalData: function (successCallback, errorCallback, args) {
+	 updateWinIntervalData: function (successCallback, errorCallback, args) {
         socketsInterval.dataInterval = args[0];
     }
 };

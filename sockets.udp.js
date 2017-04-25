@@ -139,8 +139,8 @@ exports.stopWinInterval = function(successCallback, errorCallback){
 	exec(null,null, "ChromeSocketsUdp", "stopWinInterval", []);
 };
 
-exports.updateIntervalData = function (successCallback, errorCallback, newData) {
-    exec(null, null, "ChromeSocketsUdp", "updateIntervalData", [newData]);
+exports.updateWinIntervalData = function (successCallback, errorCallback, newData) {
+    exec(null, null, "ChromeSocketsUdp", "updateWinIntervalData", [newData]);
 };
 
 //-------------- Windows - End -------------------------------------------------------------------
