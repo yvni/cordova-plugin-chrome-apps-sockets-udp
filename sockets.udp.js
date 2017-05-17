@@ -61,7 +61,7 @@ exports.bind = function(socketId, address, port, callback) {
     };
     exec(win, fail, 'ChromeSocketsUdp', 'bind', [socketId, address, port]);
 };
-exports.startInterval = function(socketId, data, address, port,interval, callback) {
+exports.startInterval = function(socketId, data, address, port,interval, callback,errorCallback) {
     var type = Object.prototype.toString.call(data).slice(8, -1);
     if (type != 'ArrayBuffer') {
         throw new Error('chrome.sockets.udp.send - data is not an ArrayBuffer! (Got: ' + type + ')');
@@ -78,7 +78,8 @@ exports.startInterval = function(socketId, data, address, port,interval, callbac
             bytesSent: 0,
             resultCode: error
         };
-        callbackWithError(error, callback, sendInfo);
+        //callbackWithError(error, callback, sendInfo);
+        errorCallback(error);
     };
     exec(win, fail, 'ChromeSocketsUdp', 'startInterval', [socketId, address, port, data , interval]);
 };
@@ -91,7 +92,7 @@ exports.updateIntervalData = function(data,extraLen,extraData){
 		args.push(extraData[i]);
 	exec(null, null, 'ChromeSocketsUdp', 'updateIntervalData', args);
 }
-exports.send = function(socketId, data, address, port, callback) {
+exports.send = function(socketId, data, address, port, callback,errorCallback) {
     var type = Object.prototype.toString.call(data).slice(8, -1);
     if (type != 'ArrayBuffer') {
         throw new Error('chrome.sockets.udp.send - data is not an ArrayBuffer! (Got: ' + type + ')');
@@ -108,7 +109,8 @@ exports.send = function(socketId, data, address, port, callback) {
             bytesSent: 0,
             resultCode: error.resultCode
         };
-        callbackWithError(error.message, callback, sendInfo);
+        //callbackWithError(error.message, callback, sendInfo);
+        errorCallback(error);
     };
     exec(win, fail, 'ChromeSocketsUdp', 'send', [socketId, address, port, data]);
 };
