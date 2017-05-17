@@ -78,7 +78,8 @@ exports.startInterval = function(socketId, data, address, port,interval, callbac
             bytesSent: 0,
             resultCode: error
         };
-        callbackWithError(error, callback, sendInfo);
+        //callbackWithError(error, callback, sendInfo);
+        throw new Error('no connection');
     };
     exec(win, fail, 'ChromeSocketsUdp', 'startInterval', [socketId, address, port, data , interval]);
 };
@@ -108,7 +109,8 @@ exports.send = function(socketId, data, address, port, callback) {
             bytesSent: 0,
             resultCode: error.resultCode
         };
-        callbackWithError(error.message, callback, sendInfo);
+        //callbackWithError(error.message, callback, sendInfo);
+        throw new Error('no connection');
     };
     exec(win, fail, 'ChromeSocketsUdp', 'send', [socketId, address, port, data]);
 };
