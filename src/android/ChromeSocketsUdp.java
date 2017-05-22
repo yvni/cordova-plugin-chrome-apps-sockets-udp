@@ -77,7 +77,7 @@ public class ChromeSocketsUdp extends CordovaPlugin {
           socket.addSendPacket(address, port, extras.get(i), callback);
           addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
         } 
-    } catch (SocketException e) {
+    } catch (Exception e) {
       callback.error(buildErrorInfo(-2, e.getMessage()));
     }
 	  
