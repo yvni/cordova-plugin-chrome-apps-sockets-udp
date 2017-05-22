@@ -67,13 +67,19 @@ public class ChromeSocketsUdp extends CordovaPlugin {
 	  this.extras = new ArrayList<byte[]>();
     }
     public void run(){
-      socket.addSendPacket(address, port, data, callback);
-      addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
-	  
-	  for(int i=0;i<extras.size();i++){
-		socket.addSendPacket(address, port, extras.get(i), callback);
-		addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
-	  }
+
+      
+    try {
+        socket.addSendPacket(address, port, data, callback);
+        addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+      
+        for(int i=0;i<extras.size();i++){
+          socket.addSendPacket(address, port, extras.get(i), callback);
+          addSelectorMessage(socket, SelectorMessageType.SO_ADD_WRITE_INTEREST, null);
+        } 
+    } catch (SocketException e) {
+      callback.error(buildErrorInfo(-2, e.getMessage()));
+    }
 	  
     }
 	public void setData(byte[] data,ArrayList<byte[]>extras){
