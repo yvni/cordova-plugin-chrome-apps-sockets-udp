@@ -86,207 +86,208 @@ exports.startInterval = function (socketId, data, address, port, interval, callb
 exports.stopInterval = function () {
     exec(null, null, 'ChromeSocketsUdp', 'stopInterval', []);
 }
-exports.updateIntervalData = function (data, extraLen, extraData) {
+exports.updateIntervalData = function (data, extraLen, extraData, errorCallback) {
     var args = [data, extraLen];
     for (var i = 0; i < extraLen; i++)
         args.push(extraData[i]);
-
+    var fail = errorCallback && function (error) {
+        var sendInfo = {
+            bytesSent: 0,
+            resultCode: error.resultCode
+        }
+        errorCallback(error);
+    };
+    exec(null, fail, 'ChromeSocketsUdp', 'updateIntervalData', args);
+}
+exports.send = function (socketId, data, address, port, callback, errorCallback) {
+    var type = Object.prototype.toString.call(data).slice(8, -1);
+    if (type != 'ArrayBuffer') {
+        throw new Error('chrome.sockets.udp.send - data is not an ArrayBuffer! (Got: ' + type + ')');
+    }
+    var win = callback && function (bytesSent) {
+        var sendInfo = {
+            bytesSent: bytesSent,
+            resultCode: 0
+        };
+        callback(sendInfo);
+    };
     var fail = callback && function (error) {
         var sendInfo = {
             bytesSent: 0,
             resultCode: error.resultCode
         };
-        exec(null, fail, 'ChromeSocketsUdp', 'updateIntervalData', args);
-    }
-    exports.send = function (socketId, data, address, port, callback, errorCallback) {
-        var type = Object.prototype.toString.call(data).slice(8, -1);
-        if (type != 'ArrayBuffer') {
-            throw new Error('chrome.sockets.udp.send - data is not an ArrayBuffer! (Got: ' + type + ')');
-        }
-        var win = callback && function (bytesSent) {
-            var sendInfo = {
-                bytesSent: bytesSent,
-                resultCode: 0
-            };
-            callback(sendInfo);
-        };
-        var fail = callback && function (error) {
-            var sendInfo = {
-                bytesSent: 0,
-                resultCode: error.resultCode
-            };
-            //callbackWithError(error.message, callback, sendInfo);
-            errorCallback(error);
-        };
-        exec(win, fail, 'ChromeSocketsUdp', 'send', [socketId, address, port, data]);
+        //callbackWithError(error.message, callback, sendInfo);
+        errorCallback(error);
     };
+    exec(win, fail, 'ChromeSocketsUdp', 'send', [socketId, address, port, data]);
+};
 
-    exports.close = function (socketId, callback) {
-        exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
+exports.close = function (socketId, callback) {
+    exec(callback, null, 'ChromeSocketsUdp', 'close', [socketId]);
+};
+
+//-------------- Windows -------------------------------------------------------------------
+
+exports.closeSocket = function () {
+    exec(null, null, 'ChromeSocketsUdp', 'closeSocket', []);
+};
+
+exports.openSocket = function (successCallback, errorCallback, ip, port) {
+    exec(successCallback, errorCallback, "ChromeSocketsUdp", "openSocket", [ip, port]);
+};
+
+exports.sendWin = function (successCallback, errorCallback, data) {
+    exec(null, null, "ChromeSocketsUdp", "send", [data]);
+};
+
+exports.startWinInterval = function (successCallback, errorCallback, ip, port, data, interval) {
+    exec(null, null, "ChromeSocketsUdp", "startWinInterval", [ip, port, data, interval]);
+};
+
+exports.stopWinInterval = function (successCallback, errorCallback) {
+    exec(null, null, "ChromeSocketsUdp", "stopWinInterval", []);
+};
+
+exports.updateWinIntervalData = function (successCallback, errorCallback, newData) {
+    exec(null, null, "ChromeSocketsUdp", "updateWinIntervalData", [newData]);
+};
+
+//-------------- Windows - End -------------------------------------------------------------------
+
+
+exports.getInfo = function (socketId, callback) {
+    var win = callback && function (result) {
+        result.persistent = !!result.persistent;
+        result.paused = !!result.paused;
+        callback(result);
     };
+    exec(null, null, "WindowsUdp", "closeSocket", []);
+};
 
-    //-------------- Windows -------------------------------------------------------------------
-
-    exports.closeSocket = function () {
-        exec(null, null, 'ChromeSocketsUdp', 'closeSocket', []);
-    };
-
-    exports.openSocket = function (successCallback, errorCallback, ip, port) {
-        exec(successCallback, errorCallback, "ChromeSocketsUdp", "openSocket", [ip, port]);
-    };
-
-    exports.sendWin = function (successCallback, errorCallback, data) {
-        exec(null, null, "ChromeSocketsUdp", "send", [data]);
-    };
-
-    exports.startWinInterval = function (successCallback, errorCallback, ip, port, data, interval) {
-        exec(null, null, "ChromeSocketsUdp", "startWinInterval", [ip, port, data, interval]);
-    };
-
-    exports.stopWinInterval = function (successCallback, errorCallback) {
-        exec(null, null, "ChromeSocketsUdp", "stopWinInterval", []);
-    };
-
-    exports.updateWinIntervalData = function (successCallback, errorCallback, newData) {
-        exec(null, null, "ChromeSocketsUdp", "updateWinIntervalData", [newData]);
-    };
-
-    //-------------- Windows - End -------------------------------------------------------------------
-
-
-    exports.getInfo = function (socketId, callback) {
-        var win = callback && function (result) {
+exports.getSockets = function (callback) {
+    var win = callback && function (results) {
+        for (var result in results) {
             result.persistent = !!result.persistent;
             result.paused = !!result.paused;
-            callback(result);
-        };
-        exec(null, null, "WindowsUdp", "closeSocket", []);
-    };
-
-    exports.getSockets = function (callback) {
-        var win = callback && function (results) {
-            for (var result in results) {
-                result.persistent = !!result.persistent;
-                result.paused = !!result.paused;
-            }
-            callback(results);
-        };
-        exec(win, null, 'ChromeSocketsUdp', 'getSockets', []);
-    };
-
-    exports.setBroadcast = function (socketId, enabled, callback) {
-        var win = callback && function () {
-            callback(0);
-        };
-        var fail = callback && function (error) {
-            callback(error.message, callback, error.resultCode);
-        };
-        exec(win, fail, 'ChromeSocketsUdp', 'setBroadcast', [socketId, enabled]);
-    };
-
-    exports.joinGroup = function (socketId, address, callback) {
-        var win = callback && function () {
-            callback(0);
-        };
-        var fail = callback && function (error) {
-            callback(error.message, callback, error.resultCode);
-        };
-        exec(win, fail, 'ChromeSocketsUdp', 'joinGroup', [socketId, address]);
-    };
-
-    exports.leaveGroup = function (socketId, address, callback) {
-        var win = callback && function () {
-            callback(0);
-        };
-        var fail = callback && function (error) {
-            callback(error.message, callback, error.resultCode);
-        };
-        exec(win, fail, 'ChromeSocketsUdp', 'leaveGroup', [socketId, address]);
-    };
-
-    exports.setMulticastTimeToLive = function (socketId, ttl, callback) {
-        var win = callback && function () {
-            callback(0);
-        };
-        var fail = callback && function (error) {
-            callback(error.message, callback, error.resultCode);
-        };
-        exec(win, fail, 'ChromeSocketsUdp', 'setMulticastTimeToLive', [socketId, ttl]);
-    };
-
-    exports.setMulticastLoopbackMode = function (socketId, enabled, callback) {
-        var win = callback && function () {
-            callback(0);
-        };
-        var fail = callback && function (error) {
-            callback(error.message, callback, error.resultCode);
-        };
-        exec(win, fail, 'ChromeSocketsUdp', 'setMulticastLoopbackMode', [socketId, enabled]);
-    };
-
-    exports.getJoinedGroups = function (socketId, callback) {
-        exec(callback, null, 'ChromeSocketsUdp', 'getJoinedGroups', [socketId]);
-    };
-
-    exports.onReceive = new Event('onReceive');
-    exports.onReceiveError = new Event('onReceiveError');
-
-    function registerReceiveEvents() {
-
-        var win = function () {
-            var info = {
-                socketId: arguments[0],
-                data: arguments[1],
-                remoteAddress: arguments[2],
-                remotePort: arguments[3]
-            };
-            exports.onReceive.fire(info);
-        };
-
-        // TODO: speical callback for android, DELETE when multipart result for
-        // android is avaliable
-        if (platform.id == 'android') {
-            win = (function () {
-                var data;
-                var call = 0;
-                return function (arg) {
-                    if (call === 0) {
-                        data = arg;
-                        call++;
-                    } else {
-                        var info = {
-                            socketId: arg.socketId,
-                            data: data,
-                            remoteAddress: arg.remoteAddress,
-                            remotePort: arg.remotePort
-                        };
-
-                        call = 0;
-
-                        exports.onReceive.fire(info);
-                    }
-                };
-            })();
         }
+        callback(results);
+    };
+    exec(win, null, 'ChromeSocketsUdp', 'getSockets', []);
+};
 
+exports.setBroadcast = function (socketId, enabled, callback) {
+    var win = callback && function () {
+        callback(0);
+    };
+    var fail = callback && function (error) {
+        callback(error.message, callback, error.resultCode);
+    };
+    exec(win, fail, 'ChromeSocketsUdp', 'setBroadcast', [socketId, enabled]);
+};
 
-        var fail = function (info) {
-            var error = function () {
-                exports.onReceiveError.fire(info);
-            };
-            callbackWithError(info.message, error);
+exports.joinGroup = function (socketId, address, callback) {
+    var win = callback && function () {
+        callback(0);
+    };
+    var fail = callback && function (error) {
+        callback(error.message, callback, error.resultCode);
+    };
+    exec(win, fail, 'ChromeSocketsUdp', 'joinGroup', [socketId, address]);
+};
+
+exports.leaveGroup = function (socketId, address, callback) {
+    var win = callback && function () {
+        callback(0);
+    };
+    var fail = callback && function (error) {
+        callback(error.message, callback, error.resultCode);
+    };
+    exec(win, fail, 'ChromeSocketsUdp', 'leaveGroup', [socketId, address]);
+};
+
+exports.setMulticastTimeToLive = function (socketId, ttl, callback) {
+    var win = callback && function () {
+        callback(0);
+    };
+    var fail = callback && function (error) {
+        callback(error.message, callback, error.resultCode);
+    };
+    exec(win, fail, 'ChromeSocketsUdp', 'setMulticastTimeToLive', [socketId, ttl]);
+};
+
+exports.setMulticastLoopbackMode = function (socketId, enabled, callback) {
+    var win = callback && function () {
+        callback(0);
+    };
+    var fail = callback && function (error) {
+        callback(error.message, callback, error.resultCode);
+    };
+    exec(win, fail, 'ChromeSocketsUdp', 'setMulticastLoopbackMode', [socketId, enabled]);
+};
+
+exports.getJoinedGroups = function (socketId, callback) {
+    exec(callback, null, 'ChromeSocketsUdp', 'getJoinedGroups', [socketId]);
+};
+
+exports.onReceive = new Event('onReceive');
+exports.onReceiveError = new Event('onReceiveError');
+
+function registerReceiveEvents() {
+
+    var win = function () {
+        var info = {
+            socketId: arguments[0],
+            data: arguments[1],
+            remoteAddress: arguments[2],
+            remotePort: arguments[3]
         };
+        exports.onReceive.fire(info);
+    };
 
-        if (platform.id == 'windows') {
-            fail = function (info) {
-                var error = function () {
+    // TODO: speical callback for android, DELETE when multipart result for
+    // android is avaliable
+    if (platform.id == 'android') {
+        win = (function () {
+            var data;
+            var call = 0;
+            return function (arg) {
+                if (call === 0) {
+                    data = arg;
+                    call++;
+                } else {
+                    var info = {
+                        socketId: arg.socketId,
+                        data: data,
+                        remoteAddress: arg.remoteAddress,
+                        remotePort: arg.remotePort
+                    };
 
-                };
+                    call = 0;
 
+                    exports.onReceive.fire(info);
+                }
             };
-        }
-
-        exec(win, fail, 'ChromeSocketsUdp', 'registerReceiveEvents', []);
+        })();
     }
 
-    require('cordova-plugin-chrome-apps-common.helpers').runAtStartUp(registerReceiveEvents);
+
+    var fail = function (info) {
+        var error = function () {
+            exports.onReceiveError.fire(info);
+        };
+        callbackWithError(info.message, error);
+    };
+
+    if (platform.id == 'windows') {
+        fail = function (info) {
+            var error = function () {
+
+            };
+
+        };
+    }
+
+    exec(win, fail, 'ChromeSocketsUdp', 'registerReceiveEvents', []);
+}
+
+require('cordova-plugin-chrome-apps-common.helpers').runAtStartUp(registerReceiveEvents);
